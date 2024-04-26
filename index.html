@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<script
+			  src="https://code.jquery.com/jquery-3.4.1.js"
+			  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+			  crossorigin="anonymous"></script>
+		<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+		<style>
+			* {border: 0px;}
+
+			body {
+				height: 100vh;
+				margin: 0;
+				padding: 0;
+				overflow-y: hidden;
+			}
+
+			#mapID {
+				height: 100vh;
+				border: 1px solid black;
+				z-index: 999;
+				cursor: default;
+			}
+
+			div.label {
+				color: #000;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="mapID"></div>
+	</body>
+	<script type="text/javascript" src="lines.js"></script>
+	<script type="text/javascript" src="polygons.js"></script>
+	<script type="text/javascript">
+		mapBounds = new L.LatLngBounds(new L.LatLng(95, 182), new L.LatLng(-95, -182));
+
+		mapObject = L.map('mapID', {
+			center: [35, -85],
+			zoom: 3,
+			maxBounds: mapBounds,
+			maxBoundsViscosity: 1.0,
+			zoomControl: false
+		});
+
+		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			maxZoom: 4,
+			minZoom: 3,
+			attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+		}).addTo(mapObject);
+
+		L.geoJSON(POLYGONS_GEOJSON, {
+			style: {
+				color: "#000000",
+				weight: 2,
+				fillOpacity: 0
+			},
+			onEachFeature: function(feature, layer) {
+				var label = L.marker(layer.getBounds().getCenter(), {
+					icon: L.divIcon({
+						className: 'label',
+						html: feature.properties.Label,
+					})
+				}).addTo(mapObject);
+			}
+		}).addTo(mapObject);
+	</script>
+</html>
